@@ -1,0 +1,9 @@
+function sToolRegime = GetToolRegime(fToolBiasAngle, fToolIncludedAngle, vA)
+    vTool = [sin(fToolAngle * %pi / 180) cos(fToolAngle * %pi / 180)]; 
+    fAngle = acos(vTool*vA'/(norm(vTool) * norm(vA))) * sign(det([vTool;vA]))
+    
+    if fAngle >  then
+    end
+
+endfunction
+

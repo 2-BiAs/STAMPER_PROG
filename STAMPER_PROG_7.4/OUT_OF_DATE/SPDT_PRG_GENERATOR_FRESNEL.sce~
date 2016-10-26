@@ -1,0 +1,133 @@
+exec('Setup_Parameters.sce');
+
+//Roughing Cut/////////////////////////////////////////////////////////////
+//listCutPath = list(list(OffsetPolyline(vPoints, vNormalOffsetRegime, mNiUndersizeOffsetComponents))); //Establish ending profile
+listFinalPass = list(OffsetPolyline(vPoints, vNormalOffsetRegime, mNiUndersizeOffsetComponents)); //Establish ending profile
+
+plBoundary = [-234 -2; -234 .15; 1 .15];
+fZ_Safety = .3 ;//
+
+pGrooveProfile = scf();
+axGrooveProfile = gca();
+axGrooveProfile.isoview = "on"
+
+[listCutPath, listCompedCutPath, iLevelIndices] = NCompMultiOffsetToBnd(listFinalPass, listMultiPassOffsetRegimes, listMultiPassOffsetComponents, plBoundary, 1, vORBM, mCutterCompOffsetComponents);
+
+
+//for i=2:10
+//    tempOffsetComponents = listMultiPassOffsetComponents(min(i-1, size(listMultiPassOffsetComponents)));
+//    listCutPath($+1) = OffsetPolylines(listCutPath($), vMultiPassOffsetRegimes, tempOffsetComponents); 
+//end
+//
+//for i=size(listCutPath):-1:1
+//    listTemp = SlicePolylines(listCutPath(i), plBoundary, %T);
+//    if isempty(listTemp) then
+//        listCutPath(i) = null();
+//    else
+//        listCutPath(i) = listTemp;
+//    end
+//    disp(i);
+//end
+//
+//i = 1;
+//bOffsetComplete = %F
+//while ~bOffsetComplete
+//    
+//end
+
+listCutPath = FlattenPolylineList(listCutPath);
+//listCutPath = ExtendEndPointsToZ(listCutPath, .1);[]
+//listCutPath = MergePolylineList(listCutPath);
+//listCutPath = listCutPath($:-1:1,:);
+
+listCompedCutPath = FlattenPolylineList(listCompedCutPath);
+listCompedCutPath = ExtendEndPointsToZ(listCompedCutPath, fZ_Safety);
+listCompedCutPath = MergePolylineList(listCompedCutPath);
+listCompedCutPath = listCompedCutPath($:-1:1,:);
+
+//SuperPlot(listCutPath, list('b--', 'r--'));
+//SuperPlot(list(plWithRad), list('b--'));
+//SuperPlot(list(plBoundary), list('b--'));
+//axGrooveProfile.isoview = "on"
+
+//plTooPath = BuildG_Code(listCutPath, iLevelIndices);
+
+    //plCutPathComped = plCutPathComped($:-1:1,:);
+    
+    
+pGrooveProfile = scf();
+axGrooveProfile = gca();
+
+//SuperPlot(listCompedCutPath, list('b--', 'r--'));
+//SuperPlot(listCutPath, list('b--', 'r--'));
+    
+    xpoly(listCompedCutPath(:,1), listCompedCutPath(:,2));
+    xpPath = get("hdl");
+//    
+    xpPath.line_style = 4;
+    xpPath.polyline_style = 4;
+    xpPath.mark_style = 2;
+    xpPath.thickness = 2;
+    xpPath.foreground = 2;
+    
+    xpoly(listFinalPass(1)(:,1), listFinalPass(1)(:,2));
+    xpPath = get("hdl");
+    
+    xpPath.line_style = 1;
+    xpPath.polyline_style = 4;
+    xpPath.mark_style = 1;
+    xpPath.thickness = 2;
+    xpPath.foreground = 3;
+    
+    xpoly(vPoints(:,1), vPoints(:,2));
+    xpPath = get("hdl");
+    
+    xpPath.line_style = 1;
+    xpPath.polyline_style = 1;
+    xpPath.mark_style = 1;
+    xpPath.thickness = 3;
+    xpPath.foreground = 4;
+ 
+//
+axGrooveProfile.data_bounds=[min(listCompedCutPath(:,1)),min(listCompedCutPath(:,2));max(listCompedCutPath(:,1)),max(listCompedCutPath(:,2))];
+axGrooveProfile.isoview = "on"
+
+pause
+
+for i=1:size(listCompedCutPath, 1)
+    if (round(vToolPathBuffer(i, 2) * 10^6) / 10^6 == fZ_Clearance) & ~(round(vToolPathBuffer(i, 1) * 10^6) / 10^6 == 0) then
+        sLineEndCode(i) = "F(P8)";
+    else
+        sLineEndCode(i) = "F(P7)";
+    end
+end
+
+//sFileToSave = uigetfile("*.txt", directory, "Save Formatted Points As")
+sFileToSave = "TEST_PRG.pgm"
+fFile = mopen(sFileToSave, 'wt');
+mfprintf(fFile, ";Facet DoC = %s\n ;Wall DoC = %s\n", string(fDepthsOfCutFacet), string(fDepthsOfCutWall));
+mfprintf(fFile, ";Tool Rad = %f\n ;Tool Angle = %f\n ;Z Clearance Plane = %f\n\n\n\n", fToolRad, fToolAngle, fZ_Clearance);
+
+sLineEndCode(1:$-1) = sLineEndCode(2:$);
+
+for i=1:length(compedToolPath(:,1))
+    mfprintf(fFile, "X%fZ%f", compedToolPath(i,1), compedToolPath(i,2));
+
+    if i~=1
+        if sLineEndCode(i) ~= sLineEndCode(i - 1) then
+            mfprintf(fFile, "%s", sLineEndCode(i));
+        end
+    else
+        mfprintf(fFile, "%s", sLineEndCode(i));    
+    end
+    
+    if i ~= length(compedToolPath(:,1)) then
+        mfprintf(fFile, "\n");
+    end
+end
+mclose(fFile);
+
+
+
+
+

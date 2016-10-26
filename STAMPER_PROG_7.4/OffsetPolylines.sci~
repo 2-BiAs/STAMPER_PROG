@@ -1,0 +1,7 @@
+function listOutput = OffsetPolylines(listInput,vOffsets)
+    listOutput = list();
+    for i=1:size(listInput)
+        
+        listOutput($+1) = OffsetPolyline(listInput(i), vOffsets);
+    end
+endfunction

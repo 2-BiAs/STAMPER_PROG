@@ -1,0 +1,31 @@
+function strmatOutput = BuildLevelCutToolPath(plBoundStart, plBoundEnd, fRapidClearance, fSafetyClearance, fDoC)
+    
+    //DEFINE CONSTANTS
+    sCodeRapid = "F(P7)";
+    sCodeInFeed = "F(P8)";
+    sCodeCrossFeed = "F(P9)";
+    
+    fScanOffset = fSafetyClearance; //MAYBE MAKE THIS CONFIGURABLE? 
+        
+    //BUILD RAPID BOUNDARY
+    plBoundRapid = OffsetNormal(plBoundStart, fRapidClearance);
+
+    //FIND BOUNDING BOX
+    fMaxX = max(max(plBoundRapid(:,1)), max(plBoundEnd(:,1)));
+    fMinX = min(min(plBoundRapid(:,1)), min(plBoundEnd(:,1)));
+    
+    fMaxZ = max(max(plBoundRapid(:,2)), max(plBoundEnd(:,2)));
+    fMinZ = min(min(plBoundRapid(:,2)), min(plBoundEnd(:,2)));
+    
+    rectBoundBox = [fMinX, fMaxZ, fMaxX - fMinX, fMaxZ - fMinZ];
+    
+    //CREATE LEVEL PL ARRAY (LIST)
+    
+    plListLevelLines = list();
+    
+    
+    
+    
+    //FIND INTERSECTIONS WITH LEVEL LINES
+    
+endfunction

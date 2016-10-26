@@ -1,0 +1,70 @@
+function mCompedPoints = SplitRadCompFromTip(mPoints, fToolRad, vToolVector)
+    
+    vA = -fToolRad * vToolVector / norm(vToolVector);
+    fArcAngle = %pi / 3;
+        
+    for i = 1:size(mPoints, 1) - 1
+        lnF = mPoints(i:i+1, :);
+        vF = [lnF(2, 1) - lnF(1 ,1), lnF(2, 2) - lnF(1 ,2)];
+        vNormF = ([0 1; -1 0] * vF')';
+        vNormF = vNormF / norm(vNormF);
+        
+        if vNormF * vToolVector' > 0 then
+            vNormF = -vNormF;
+        end
+        
+        vB = -fToolRad*vNormF; 
+        
+        fAngle = acos(-vA*vF'/(norm(vA) * norm(vF))) * sign(-det([-vA;vF]));
+        
+        printf("vF = [%f %f]    vA = [%f %f]    vB = [%f %f]    fAngle = %f    vA * vF'' = %f \n", vF(1), vF(2), vA(1), vA(2),  vB(1), vB(2), fAngle, vA * vF');
+        
+        if fAngle > 0 & fAngle <= %pi/2 & vA * vF' < 1 then
+            vComp = [0 0];
+           printf('Comp Zero');
+        elseif fAngle > %pi/2 & fAngle < fArcAngle + %pi/2 then
+            vComp = vA + vB;
+            printf('Comp Reg');
+        elseif fAngle >= fArcAngle | (fAngle < 0 & fAngle > -(%pi - %pi/2 - fArcAngle)) then
+            printf('fuck');
+        else
+            printf('Comp Rev');
+            vComp = vA + vB;
+        end
+        
+//        xpoly([mPoints(i,1); mPoints(i, 1) + vNormF(1)/50], [mPoints(i, 2); mPoints(i, 2) + vNormF(2)/50]);
+//        p=get("hdl");
+//        p.polyline_style=4;
+//        p.foreground=3
+//        xpoly([mPoints(i,1); mPoints(i, 1) + vComp(1)], [mPoints(i, 2); mPoints(i, 2) + vComp(2)]);
+//        p=get("hdl");
+//        p.polyline_style=4;
+//        p.foreground=4
+//        xpoly([mPoints(i,1); mPoints(i, 1) + vComp(1)], [mPoints(i, 2); mPoints(i, 2) + vComp(2)]);
+//        p=get("hdl");
+//        p.polyline_style=4;
+//        p.foreground=4
+        
+        printf("[%f, %f]\n", vComp(1), vComp(2));
+        if  i ~= 1 then
+            lnPrevious = mCompedPoints(i - 1:i , 1:2);
+            lnCurrent = mPoints(i + 1:-1:i, :) - [vComp; vComp];
+            mCompedPoints(i + 1:-1:i - 1, 1:2) = [lnCurrent(2,:); ExtendVector(lnCurrent, lnPrevious)];
+            if i == size(mPoints, 1) - 1 then
+                mCompedPoints(i+1:-1:i, 1:2) = ExtendVector(mCompedPoints(i+1:-1:i, 1:2), lnPrevious);
+                mCompedPoints(i: i+1, 1:2) = ExtendVector(mCompedPoints(i: i+1, 1:2), [0,0;-1,0]);
+            end
+            if [mCompedPoints(i + 1, 1:2) - mCompedPoints(i, 1:2)]/*[-1 0]' == 1 then
+            end
+        else
+            mCompedPoints(i:i + 1, 1:2) = mPoints(i: i + 1, :) - [vComp; vComp];
+        end
+//        xpoly(mPoints(i: i + 1, 1), mPoints(i: i + 1, 2)) //, 'm-.');
+//        p=get("hdl");
+//        p.polyline_style=4;
+//        xpoly(mCompedPoints(i:i + 1, 1), mCompedPoints(i:i + 1, 2)) //, 'm-.');
+//        p=get("hdl");
+//        p.polyline_style=3;
+//        pause;
+    end
+endfunction

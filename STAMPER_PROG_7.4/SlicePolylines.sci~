@@ -1,0 +1,11 @@
+function listOutput = SlicePolylines(listInput, plBoundary, bRightHanded)
+    listOutput = list();
+    
+    for i = 1:size(listInput)
+        if ~isempty(listInput) then
+            for j = 1:size()
+            end
+            listOutput($+1) = SlicePolyline(listInput(i), plBoundary, bRightHanded);
+        end
+    end
+endfunction

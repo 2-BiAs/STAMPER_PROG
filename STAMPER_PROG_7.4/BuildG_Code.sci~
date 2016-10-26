@@ -1,0 +1,27 @@
+function plOutput = BuildG_Code(listCutPath, iLevelIndicies)
+    
+    plCutPath = MergePolylineList(listCutPath);
+    
+    plCutPathComped = 
+    
+    //for i=1:size(listCutPath,1)
+    //    if(listCutPath)
+    //    sLineE
+        
+    //end
+    
+    plCutPath = plCutPath($:-1:1,:);
+    
+    
+    xpoly(plCutPath(:,1), plCutPath(:,2));
+    xpPath = get("hdl");
+    
+    xpPath.line_style = 4;
+    xpPath.polyline_style = 4;
+    xpPath.mark_style = 2;
+    xpPath.thickness = 2;
+    xpPath.foreground = 2;
+    
+    plOutput = plCutPath;
+    
+endfunction
