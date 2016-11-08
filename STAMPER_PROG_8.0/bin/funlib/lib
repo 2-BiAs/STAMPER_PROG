@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<scilablib name="mylib">
-  <macro name="BuildLevelCutToolPath" file="BuildLevelCutToolPath.bin" md5="e34621c0c6dc6cc4a50465608ec9092f"/>
-  <macro name="GetBoundingBox" file="GetBoundingBox.bin" md5="e47dc52fb6f8743bf528741b3930aca0"/>
-</scilablib>
