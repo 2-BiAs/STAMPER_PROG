@@ -11,6 +11,11 @@ BuildLibs();
 printf('\nLoading Libraries\n');
 
 exec('bin\LoadLibs.sci');
-LoadLibs();
+listLibs = LoadLibs();
+
+//Setting Libraries to variables
+for i=1:2:size(listLibs) / 2
+    execstr(listLibs(i+1) + ' = listLibs(i)');
+end
 
 printf('\nInitialization Complete\n');

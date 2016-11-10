@@ -1,6 +1,13 @@
 function toolOutput = BuildTool(sType, fRad, fIncludedAngle, fBiasAngle)
     
-    //Add cases for different tool types. Tool Must be a convex polygon.
+    //TODO: Add cases for different tool types. Tool Must be a convex polygon.
+    
+    //ORBM: Offset Regime Boundary Matrix
+    //TCOC: Tool Compensation Offset Components
+    
+    //fRad: Tool radius in mm
+    //fIncludedAngle: ...in rad
+    //fBiasAngle: ...in rad    
     
     toolOutput.Vector = [cos(fBiasAngle) sin(fBiasAngle)];
     
